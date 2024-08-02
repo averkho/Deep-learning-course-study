@@ -92,21 +92,23 @@ for X,y in data_iter:
     break
     
 model=torch.nn.Sequential(torch.nn.Linear(2,1))
-model[0].weight.data = true_w.clone().detach().requires_grad_(True).reshape((1,2))
-model[0].bias.data = torch.Tensor([true_b]).detach().requires_grad_(True)
+#model[0].weight.data = true_w.clone().detach().requires_grad_(True).reshape((1,2))
+#model[0].bias.data = torch.Tensor([true_b]).detach().requires_grad_(True)
    
 loss = torch.nn.MSELoss(reduction='mean')
 
 trainer = torch.optim.SGD(model.parameters(), lr=0.001)
 
 num_epochs = 1000
-for epoch in num_epochs:
+for epoch in range(num_epochs):
     for X,y in data_iter:
         trainer.zero_grad()
         l = loss(model(X).reshape(-1),y)
         l.backward()
         trainer.step()
-    l = loss
+    l = loss(model(features).reshape(-1),labels)
+    if epoch%10 == 0:
+        print("Epoch {} training loss = {} weights = {} bias = {}".format(epoch,l,model[0].weight.data, model[0].bias.data))
     
     
     
